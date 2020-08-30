@@ -1,4 +1,9 @@
 {
-    "javascript.preferences.quoteStyle": "single",
-    "typescript.preferences.quoteStyle": "single"
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "launch": {
+    "configurations": [],
+    "compounds": []
+  },
+  "editor.formatOnSave": true
 }
