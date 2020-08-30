@@ -31,7 +31,7 @@ Public Function hasR(src As Variant, Optional c As Variant) As Boolean
     
     Dim str As String
     
-    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Double" Then
+    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Long" Then
         str = Cells(src, c).Value
         
     ElseIf TypeName(src) = "String" Then
@@ -54,7 +54,7 @@ Public Function hasU(src As Variant, Optional c As Variant) As Boolean
     
     Dim str As String
     
-    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Double" Then
+    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Long" Then
         str = Cells(src, c).Value
         
     ElseIf TypeName(src) = "String" Then
@@ -77,7 +77,7 @@ Public Function hasD(src As Variant, Optional c As Variant) As Variant
     
     Dim str As String
     
-    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Double" Then
+    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Long" Then
         str = Cells(src, c).Value
         
     ElseIf TypeName(src) = "String" Then
@@ -101,7 +101,7 @@ Public Function hasCRUD(src As Variant, Optional c As Variant) As Boolean
     
     Dim str As String
 
-    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Double" Then
+    If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Long" Then
         str = Cells(src, c).Value
         
     ElseIf TypeName(src) = "String" Then
@@ -156,8 +156,8 @@ Public Function GetColor(rng As Range, Optional return_type As Integer = 0) As V
 End Function
 
 
-Public Function numToChar(num As Integer) As String
-    num = num - 1
+Public Function numToChar(num) As String
+    num = CInt(num) - 1
     '몫, 나머지
     Dim quotient As Integer, remainder As Integer
     If num < 26 Then
@@ -182,8 +182,8 @@ Public Function getAreaCoord(cell As Range) As Object
     Dim colIdx
     colIdx = InStr(addr, ":")
     
-    Dim leftAddr, leftCol, leftRow As Integer
-    Dim rightAddr, rightCol, rightRow As Integer
+    Dim leftAddr, leftCol, leftRow
+    Dim rightAddr, rightCol, rightRow
     
     ' 만일 인자로 들어 온 셀이 오로지 하나(A1)라면 A1:A1 로 만들어 준다
     If colIdx = 0 Then
@@ -201,18 +201,18 @@ Public Function getAreaCoord(cell As Range) As Object
     rightCol = Range(rightAddr).Column
     
     ' Pointer변수 같은 애, 하나의 Dictionary 자료형을 만들어서 참조해.
-    Dim Coord As Object: Set Coord = CreateObject("Scripting.Dictionary")
+    Dim coord As Object: Set coord = CreateObject("Scripting.Dictionary")
         
-    Coord.Add "leftRow", leftRow
-    Coord.Add "leftCol", leftCol
-    Coord.Add "rightRow", rightRow
-    Coord.Add "rightCol", rightCol
+    coord.Add "leftRow", leftRow
+    coord.Add "leftCol", leftCol
+    coord.Add "rightRow", rightRow
+    coord.Add "rightCol", rightCol
     
 '    For Each k In Coord.keys
 '        MsgBox (k & " :  " & Coord.Item(k))
 '        Next
     
-    Set getAreaCoord = Coord
+    Set getAreaCoord = coord
 
 End Function
 
@@ -220,13 +220,13 @@ End Function
 Public Function maxText(cell As Range) As String
     Dim resText As String: resText = ""
     
-    Dim Coord As Object: Set Coord = getAreaCoord(cell)
-    Dim leftRow, leftCol, rightRow, rightCol As Integer
+    Dim coord As Object: Set coord = getAreaCoord(cell)
+    Dim leftRow, leftCol, rightRow, rightCol
     
-    leftRow = Coord.Item("leftRow")
-    leftCol = Coord.Item("leftCol")
-    rightRow = Coord.Item("rightRow")
-    rightCol = Coord.Item("rightCol")
+    leftRow = coord.Item("leftRow")
+    leftCol = coord.Item("leftCol")
+    rightRow = coord.Item("rightRow")
+    rightCol = coord.Item("rightCol")
     
     Dim fixedRow As Integer: fixedRow = leftRow
     
@@ -260,15 +260,15 @@ End Function
 ' 총 테이블 갯수를 구해주는 함수
 Function getTotTable(cell As Range, Optional selectCRUD As String)
     
-    Dim Coord As Object: Set Coord = getAreaCoord(cell)
+    Dim coord As Object: Set coord = getAreaCoord(cell)
 '    Dim Coord As Object: Set Coord = tDic(cell)
     
     Dim leftRow, leftCol, rightRow, rightCol As Integer
     
-    leftRow = Coord.Item("leftRow")
-    leftCol = Coord.Item("leftCol")
-    rightRow = Coord.Item("rightRow")
-    rightCol = Coord.Item("rightCol")
+    leftRow = coord.Item("leftRow")
+    leftCol = coord.Item("leftCol")
+    rightRow = coord.Item("rightRow")
+    rightCol = coord.Item("rightCol")
 
     Dim totCnt As Integer: totCnt = 0
     If StrComp(selectCRUD, "") = 0 Or StrComp(selectCRUD, "CRUD") = 0 Or IsEmpty(selectCRUD) Then
@@ -326,13 +326,13 @@ End Function
 '열의 위치는 변할 수 있기 때문에, 상단의 Column의 위치는 절대경로로 설정하자
 Function getColSum(cell As Range, Optional selectCRUD As String)
     
-    Dim Coord As Object: Set Coord = getAreaCoord(cell)
+    Dim coord As Object: Set coord = getAreaCoord(cell)
     Dim leftRow, leftCol, rightRow, rightCol As Integer
     
-    leftRow = Coord.Item("leftRow")
-    leftCol = Coord.Item("leftCol")
-    rightRow = Coord.Item("rightRow")
-    rightCol = Coord.Item("rightCol")
+    leftRow = coord.Item("leftRow")
+    leftCol = coord.Item("leftCol")
+    rightRow = coord.Item("rightRow")
+    rightCol = coord.Item("rightCol")
     
     Dim colSum, r As Integer: colSum = 0
     Dim fixedRow As Integer: fixedRow = leftRow
@@ -386,13 +386,13 @@ End Function
 ' 색이 노랗거나 셀값이 존재하는 경우를 따로 솎아내야해
 Function hasTrig(cell As Range)
     
-    Dim Coord As Object: Set Coord = getAreaCoord(cell)
+    Dim coord As Object: Set coord = getAreaCoord(cell)
     Dim leftRow, leftCol, rightRow, rightCol As Integer
     
-    leftRow = Coord.Item("leftRow")
-    leftCol = Coord.Item("leftCol")
-    rightRow = Coord.Item("rightRow")
-    rightCol = Coord.Item("rightCol")
+    leftRow = coord.Item("leftRow")
+    leftCol = coord.Item("leftCol")
+    rightRow = coord.Item("rightRow")
+    rightCol = coord.Item("rightCol")
     
     Dim fixedRow As Integer: fixedRow = leftRow
     
@@ -534,128 +534,22 @@ Sub addRowsAdvanced()
     
     Application.ScreenUpdating = False
     
-    '이 화면의 영역을 찾아야 해
-    Dim leftRow, leftCol, rightRow, rightCol As Integer
+    '관심을 가질 영역을 찾자.
+    Dim coord As Object: Set coord = findArea(1, 1)
+    Dim leftRow, leftCol, rightRow, rightCol
     
-    'Find Start Point : name "성우쿤"
-    ' 플래그 변수 flg는 2중 for문을 벗어나기 위한 변수야.
-    Dim flg As Boolean: flg = False
-    For r = 1 To (26)
-        If flg = True Then
-            Exit For
-        End If
-        For c = 1 To (26)
-            '성우쿤을 찾는 다면, row, col 좌표를 저장 해줘
-            If StrComp(Cells(r, c).Value, "성우쿤") = 0 Then
-                leftRow = r
-                leftCol = c
-                flg = True
-                Exit For
-            End If
-        Next c
-    Next r
-    
-    If flg = False Then
-        MsgBox ("테이블 이름에 '성우쿤' 넣어주세요!")
-        MsgBox ("간장치킨 최고")
-        Exit Sub
-    End If
-    
-    'Find End Point : 끝점을 찾자
-    For r = leftRow To (26 * 26 * 26)
-        If StrComp(Cells(r, leftCol).Value, "") = 0 Then
-            rightRow = r - 1
-            Exit For
-        End If
-    Next r
-        
-    For c = leftCol To (26 * 26 * 26)
-        If StrComp(Cells(leftRow, c).Value, "") = 0 Then
-            rightCol = c - 1
-            Exit For
-        End If
-    Next c
+    leftRow = coord("leftRow")
+    leftCol = coord("leftCol")
+    rightRow = coord("rightRow")
+    rightCol = coord("rightCol")
     
     ' Header를 제외하고 생각하자
     leftRow = leftRow + 1
 
+
     ' [make DICTIONARY]
-    ' row별 maxText를 수집하여 Dictionary 형태의 정보로 저장한다.
     Dim topicCRUD As Object
-    Set topicCRUD = Nothing
-    Set topicCRUD = CreateObject("Scripting.Dictionary")
-
-    Dim title As Variant, crudList As Variant, rngStr As Variant
-
-    Dim fixedLeftCol: fixedLeftCol = numToChar(leftCol + 1)
-    Dim fixedRightCol: fixedRightCol = numToChar(rightCol)
-
-    Dim isAlreadyHave As Boolean: isAlreadyHave = False
-
-    Dim titleStr As String
-    ' 중복이 된 것이 있다면 +1씩 해줄 것이야.
-    Dim reDuple As Integer: reDuple = 1
-
-    'table의 갯수, col의 합 넣기
-    For r = leftRow To rightRow
-        rngStr = fixedLeftCol & r & ":" & fixedRightCol & r
-
-        ' 첫 행이면 그냥 넣자.
-        If (r = leftRow) Then
-            title = Cells(r, leftCol).Value
-        Else
-            For Each checkTitle In topicCRUD
-                titleStr = CStr(checkTitle)
-                '만일 중복이 있다면
-                If StrComp(CStr(Cells(r, leftCol).Value), CStr(titleStr)) = 0 Then
-                    title = Cells(r, leftCol).Value & "(" & reDuple & ")"
-                    reDuple = reDuple + 1
-                    Exit For
-                Else
-                    title = Cells(r, leftCol).Value
-                End If
-            Next
-        End If
-
-        '하위 객체(crudList, getTot, getColSum)들을 담을 임시 객체를 선언한다.
-        Dim tempObj As Object
-        Set tempObj = Nothing
-        Set tempObj = CreateObject("Scripting.Dictionary")
-
-        ' CRUD 정보를 받을 변수 선언 및 임시 객체에 할당
-        crudList = maxText(Range(rngStr))
-        tempObj.Add "crudList", crudList
-
-        Dim totTable As Object
-        Set totTable = Nothing
-        Set totTable = CreateObject("Scripting.Dictionary")
-
-        totTable.Add "C", getTotTable(Range(rngStr), "C")
-        totTable.Add "R", getTotTable(Range(rngStr), "R")
-        totTable.Add "U", getTotTable(Range(rngStr), "U")
-        totTable.Add "D", getTotTable(Range(rngStr), "D")
-
-        '임시 객체에 할당한 후 기존  totTable객체를 해제 해야 재 할당이 가능하다.
-        tempObj.Add "totTable", totTable
-        Set totTable = Nothing
-
-        Dim colSum As Object
-        Set colSum = Nothing
-        Set colSum = CreateObject("Scripting.Dictionary")
-        
-        colSum.Add "C", getColSum(Range(rngStr), "C")
-        colSum.Add "R", getColSum(Range(rngStr), "R")
-        colSum.Add "U", getColSum(Range(rngStr), "U")
-        colSum.Add "D", getColSum(Range(rngStr), "D")
-
-        tempObj.Add "colSum", colSum
-        Set colNum = Nothing
-
-        topicCRUD.Add title, tempObj
-        Set tempObj = Nothing
-
-    Next r
-
+    Set topicCRUD = getBigDic(leftRow, leftCol, rightRow, rightCol)
 
     ' [만든 정보를 바탕으로 행 삽입하기]
     Dim cursorRow As Integer: cursorRow = leftRow
@@ -766,6 +660,7 @@ Sub addRowsAdvanced()
         End If
     Next
 
+
     ' [TestPage 만들기]
     Dim Ws As Worksheet
     Set Ws = ThisWorkbook.Sheets.Add(After:= _
@@ -844,7 +739,145 @@ Sub copyTest()
 End Sub
 
 
+' [make DICTIONARY]
+' 인자로는 테이블의 헤더를 제와한 좌표를 넣는다.
+' row별 maxText를 수집하여 Dictionary 형태의 정보로 저장한다.
+Public Function getBigDic(leftRow, leftCol, rightRow, rightCol)
+    Dim topicCRUD As Object
+    Set topicCRUD = Nothing
+    Set topicCRUD = CreateObject("Scripting.Dictionary")
 
+    Dim title As Variant, crudList As Variant, rngStr As Variant
+
+    Dim fixedLeftCol: fixedLeftCol = numToChar(leftCol + 1)
+    Dim fixedRightCol: fixedRightCol = numToChar(rightCol)
+
+    Dim isAlreadyHave As Boolean: isAlreadyHave = False
+
+    Dim titleStr As String
+    ' 중복이 된 것이 있다면 +1씩 해줄 것이야.
+    Dim reDuple As Integer: reDuple = 1
+
+    'table의 갯수, col의 합 넣기
+    For r = leftRow To rightRow
+        rngStr = fixedLeftCol & r & ":" & fixedRightCol & r
+
+        ' 첫 행이면 그냥 넣자.
+        If (r = leftRow) Then
+            title = Cells(r, leftCol).Value
+        Else
+            For Each checkTitle In topicCRUD
+                titleStr = CStr(checkTitle)
+                '만일 중복이 있다면
+                If StrComp(CStr(Cells(r, leftCol).Value), CStr(titleStr)) = 0 Then
+                    title = Cells(r, leftCol).Value & "(" & reDuple & ")"
+                    reDuple = reDuple + 1
+                    Exit For
+                Else
+                    title = Cells(r, leftCol).Value
+                End If
+            Next
+        End If
+
+        '하위 객체(crudList, getTot, getColSum)들을 담을 임시 객체를 선언한다.
+        Dim tempObj As Object
+        Set tempObj = Nothing
+        Set tempObj = CreateObject("Scripting.Dictionary")
+
+        ' CRUD 정보를 받을 변수 선언 및 임시 객체에 할당
+        crudList = maxText(Range(rngStr))
+        tempObj.Add "crudList", crudList
+
+        Dim totTable As Object
+        Set totTable = Nothing
+        Set totTable = CreateObject("Scripting.Dictionary")
+
+        totTable.Add "C", getTotTable(Range(rngStr), "C")
+        totTable.Add "R", getTotTable(Range(rngStr), "R")
+        totTable.Add "U", getTotTable(Range(rngStr), "U")
+        totTable.Add "D", getTotTable(Range(rngStr), "D")
+
+        '임시 객체에 할당한 후 기존  totTable객체를 해제 해야 재 할당이 가능하다.
+        tempObj.Add "totTable", totTable
+        Set totTable = Nothing
+
+        Dim colSum As Object
+        Set colSum = Nothing
+        Set colSum = CreateObject("Scripting.Dictionary")
+        
+        colSum.Add "C", getColSum(Range(rngStr), "C")
+        colSum.Add "R", getColSum(Range(rngStr), "R")
+        colSum.Add "U", getColSum(Range(rngStr), "U")
+        colSum.Add "D", getColSum(Range(rngStr), "D")
+
+        tempObj.Add "colSum", colSum
+        Set colNum = Nothing
+
+        topicCRUD.Add title, tempObj
+        Set tempObj = Nothing
+    Next r
+
+    Set getBigDic = topicCRUD
+End Function
+
+'관심을 가질 화면의 시작점을 찾아서 관심영역의 좌표를 반환
+
+'어디서부터 찾을지 시작점을 입력
+'성우쿤이라는 테이블의 헤더를 포함한 테이블의 영역을 반환
+Public Function findArea(startRow As Integer, startCol As Integer) As Object
+    Dim leftRow, leftCol, rightRow, rightCol
+    
+    'Find Start Point : name "성우쿤"
+    ' 플래그 변수 flg는 2중 for문을 벗어나기 위한 변수야.
+    Dim flg As Boolean: flg = False
+    For r = startRow To (26)
+        If flg = True Then
+            Exit For
+        End If
+        For c = startCol To (26)
+            '성우쿤을 찾는 다면, row, col 좌표를 저장 해줘
+            If StrComp(Cells(r, c).Value, "성우쿤") = 0 Then
+                leftRow = r
+                leftCol = c
+                flg = True
+                Exit For
+            End If
+        Next c
+    Next r
+    
+    If flg = False Then
+        MsgBox ("테이블 이름에 '성우쿤' 넣어주세요!")
+        MsgBox ("간장치킨 최고")
+        Exit Function
+    End If
+    
+    'Find End Point : 끝점을 찾자
+    For r = leftRow To (26 * 26 * 26)
+        If StrComp(Cells(r, leftCol).Value, "") = 0 Then
+            rightRow = r - 1
+            Exit For
+        End If
+    Next r
+        
+    For c = leftCol To (26 * 26 * 26)
+        If StrComp(Cells(leftRow, c).Value, "") = 0 Then
+            rightCol = c - 1
+            Exit For
+        End If
+    Next c
+    
+    
+    
+    Dim coord As Object: Set coord = CreateObject("Scripting.Dictionary")
+    
+    coord.Add "leftRow", leftRow
+    coord.Add "leftCol", leftCol
+    coord.Add "rightRow", rightRow
+    coord.Add "rightCol", rightCol
+    
+    Set findArea = coord
+    
+End Function
 
 
 
