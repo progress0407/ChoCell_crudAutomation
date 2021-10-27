@@ -8,7 +8,6 @@ Public Function hasC(src As Variant, Optional c As Variant) As Boolean
     'Integer가 아닌 Double로 return이 돼!
     If TypeName(src) = "Integer" Or TypeName(src) = "Double" Or TypeName(src) = "Long" Then
         ' 이경우 src가 row야
-        str = Cells(src, c).Value
         
     ElseIf TypeName(src) = "String" Then
         str = src
@@ -150,7 +149,7 @@ Public Function GetColor(rng As Range, Optional return_type As Integer = 0) As V
         GetColor = Hex(colorVal)
     
     Else
-            GetColor = CVErr(xlErrValue)
+        GetColor = CVErr(xlErrValue)
     End If
  
 End Function
@@ -403,6 +402,7 @@ Function hasTrig(cell As Range)
         End If
         Next c
     hasTrig = "noTrig"
+    
 End Function
 
 
